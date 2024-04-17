@@ -18,9 +18,10 @@ class WordstatParser:
 
     def _send_request(self, body: dict):
         try:
+            logger.info(f'Тело запроса: {body}')
             response = requests.post(self.BASE_URL, json=body)
             response_data = response.json()
-            logger.info(f'Тело запроса: {response_data}')
+            logger.info(f'Ответ сервера: {response_data}')
 
             # Проверка на наличие ошибки в ответе
             if 'error_str' in response_data:
@@ -43,10 +44,17 @@ class WordstatParser:
             logger.exception('Неизвестная ошибка:')
             raise
 
-    def create_new_wordstat_report(
-                                self,
-                                phrases: list,
-                                geo_ids: list):
+    def get_report_list(self) -> list:
+        body = {
+                'method': 'GetWordstatReportList',
+                'token': self.token
+            }
+        response = self._send_request(body)
+        report_list = response.json()['data']
+        logger.info(f'Список запросов: {report_list}')
+        return report_list
+
+    def create_wordstat_report(self, phrases: list, geo_ids: list) -> int:
         body = {
                     'method': 'CreateNewWordstatReport',
                     'param': {
@@ -55,10 +63,8 @@ class WordstatParser:
                                 },
                     'token': self.token
                 }
-        response = requests.post(self.BASE_URL, json=body)
-        print(response)
-        print(response.text)
-        print(response.json())
+        response = self._send_request(body)
+        return
 
 
 
@@ -76,4 +82,5 @@ if __name__ == '__main__':
     geo_ids = [213]
 
     parser = WordstatParser(login, token)
+    parser.get_report_list()
 
