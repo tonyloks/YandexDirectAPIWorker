@@ -14,15 +14,18 @@ WordstatParser: Класс для работы с API Яндекс.Директ.
 Удаление отчетов.
 Извлечение и представление данных из готовых отчетов.
 
-##Логирование:
+## Логирование:
 Модуль использует библиотеку logging для записи информации о выполнении операций, что облегчает отладку и мониторинг состояния выполнения запросов.
 Настройка:
 Для работы модуля необходимо в переменные login и token положить данные от аккаунта.
 
 ## Пример использования:
+
+```
 phrases = ['купить слона', 'sadsa']
 geo_ids = [123]
 validator = WordstatUserDataValidator()
 validator.validate_user_entry_data(phrases, geo_ids)
 parser = WordstatParser(os.getenv('account_login'), os.getenv('account_token'))
 report_id = parser.create_wordstat_report(phrases, geo_ids)
+```
