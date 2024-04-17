@@ -14,9 +14,13 @@ class AccountInfoGetter_APIv4:
 
     def _send_request(self, body: dict):
         try:
-            response = requests.post(self.BASE_URL, json=body)
+            logger.info(f'Тело запроса: {body}')
+
+            json_body = json.dumps(body, ensure_ascii=False).encode('UTF-8')
+            response = requests.post(self.BASE_URL, json_body)
+
             response_data = response.json()
-            logger.info(f'Тело запроса: {response_data}')
+            logger.info(f'Ответ сервера: {response_data}')
 
             # Проверка на наличие ошибки в ответе
             if 'error_str' in response_data:
@@ -26,17 +30,7 @@ class AccountInfoGetter_APIv4:
                 logger.info("Ответ сервера получен.")
                 return response
 
-        except json.decoder.JSONDecodeError:
-            logger.exception('Ошибка при декодировании JSON:')
-            raise
-        except requests.exceptions.JSONDecodeError:
-            logger.exception('Ошибка при декодировании JSON:')
-            raise
-        except requests.exceptions.HTTPError:
-            logger.exception('Ошибка при обращении к серверу.')
-            raise
         except Exception as e:
-            logger.exception('Неизвестная ошибка:')
             raise
 
 

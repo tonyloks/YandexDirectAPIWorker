@@ -1,6 +1,5 @@
 import requests
 import datetime
-
 import logging
 
 # Настройка логирования
@@ -9,11 +8,11 @@ logging.basicConfig(level=logging.INFO,
 
 logger = logging.getLogger(__name__)
 
+
 class APIv5Validator:
     @staticmethod
     def validate(login: str, token: str):
         try:
-            logger.info('Проверяю пользовательские данные.')
             url = 'https://api.direct.yandex.com/json/v5/changes'
 
             headers = {
@@ -32,19 +31,13 @@ class APIv5Validator:
             response = requests.post(url, headers=headers, json=body)
             if response.status_code == 200:
                 if 'error' in response.json():
-                    logger.error('Ошибка в данных!')
                     raise ValueError(response.json()['error']['error_detail'])
                 else:
-                    logger.info('Авторизация успешна.')
                     return True
             else:
                 raise requests.exceptions.HTTPError('Ошибка в запросе.')
-        except ValueError:
-            logger.exception('Проверьте пользовательские данные.')
-        except requests.exceptions.HTTPError:
-            logger.exception('Запрос неверный.')
         except Exception as e:
-            logger.exception('Неизвестная ошибка.')
+            raise
 
 
 if __name__ == '__main__':
